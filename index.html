@@ -223,6 +223,12 @@
                         console.log('response.error:' + response.error);
                         if (response.error == false) {
                             if ((response.data.IsLogin == 1) && (response.data.AgentStatus != 9)) {
+
+                                currentAgent.AgentCode = response.data.agent_code;
+                                currentAgent.AgentName = response.data.AgentName;
+                                currentAgent.IsLogin = response.data.IsLogin;
+                                currentAgent.AgentStatus = response.data.AgentStatus;
+                                
                                 wsChecks = "true";
                                 console.log("new: " + wsChecks);
                                 //$("#errMessage").hide();
