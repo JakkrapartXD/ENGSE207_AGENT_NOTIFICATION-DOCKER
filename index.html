@@ -43,12 +43,28 @@
         var APIServer = "https://10.21.43.203:8400/api/v1";
         var WebSecketServer = "ws://10.21.43.203:8401";
 
-        var ConcurrentCall = [];
-        var connectSocket = false;
-        var IsLogin = 0;
-        var wsChecks = "false";
+        let ParseServerAPI = "https://10.21.43.203:8405/api";
+        let ParseMasterKey = "wallboardapi";
+        let ParseClientKey = "wallboardapi";
+        let ParseJavascriptKey = "wallboardapi";
+        let ParseAppId = "wallboardapi";
+        let TeamNo = '4';
 
-        var c;
+        let currentAgent = {
+            AgentCode : '',
+            AgentName : '',
+            Team : TeamNo,
+            AgentStatus : '',
+            AgentStatusCode : '',
+            IsLogin : '',
+        }
+
+        let ConcurrentCall = [];
+        let connectSocket = false;
+        let IsLogin = 0;
+        let wsChecks = "false";
+
+        let c;
         let ws;
 
         let checked;
@@ -466,6 +482,41 @@
             console.log(localStorage.getItem("agent"));
 
         }
+
+        function GetSelectedTextValue(currentStatus) {
+        let selectedText = currentStatus.options[currentStatus.selectedIndex].innerHTML;
+        let selectedValue = currentStatus.value;
+            alert("Selected Text: " + selectedText + " Value: " + selectedValue);
+        // Create a data object to send to the API
+        const data = {
+        AgentCode: $("#agent").val(),
+        AgentName: currentAgent.AgentName,
+        Quere: currentAgent.Team,
+        AgentStatus: selectedValue,
+        AgentStatusCode: currentAgent.AgentStatusCode,
+        IsLogin: currentAgent.IsLogin
+        };
+
+        // Send a POST request to the API to update the agent's status
+        $.ajax({
+            type: 'POST',
+            url: ParseServerAPI + "/functions/postOnlineAgentListByTeam",
+            headers: {
+            "X-Parse-Application-Id": ParseAppId,
+            "X-Parse-Master-Key": ParseMasterKey
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function(response) {
+            console.log("Agent status updated successfully!");
+                // Update the UI to reflect the new status
+                statusDisplay(selectedValue);
+                },
+                error: function(xhr, status, error) {
+                 console.log("Error updating agent status:", error);
+                }
+             });
+            }
 
 
         //-------- Web Socket ----------
