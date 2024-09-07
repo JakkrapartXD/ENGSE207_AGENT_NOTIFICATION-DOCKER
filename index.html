@@ -26,12 +26,12 @@
         const Timer = require("easytimer.js").Timer;
         const timer = new Timer();
 
-        var AgentCode;
-        var agentStatusID;
-        var callTotal = 0;
-        var agentData;
+        let AgentCode;
+        let agentStatusID;
+        let callTotal = 0;
+        let agentData;
 
-        var CallID;
+        let CallID;
 
         let statusLabel;
 
@@ -40,23 +40,23 @@
         //var WebSecketServer = "ws://192.168.56.1:3071";
 
         //--Staging Server------------------------------
-        var APIServer = "https://10.21.43.203:8400/api/v1";
-        var WebSecketServer = "ws://10.21.43.203:8401";
+        let APIServer = "https://10.21.43.203:8400/api/v1";
+        let WebSecketServer = "ws://10.21.43.203:8401";
 
         let ParseServerAPI = "https://10.21.43.203:8405/api";
         let ParseMasterKey = "wallboardapi";
         let ParseClientKey = "wallboardapi";
         let ParseJavascriptKey = "wallboardapi";
         let ParseAppId = "wallboardapi";
-        let TeamNo = '4';
+        let TeamNo = '4'; //<-- Enter you Team No. here.
 
         let currentAgent = {
-            AgentCode : '',
-            AgentName : '',
-            Team : TeamNo,
-            AgentStatus : '',
-            AgentStatusCode : '',
-            IsLogin : '',
+            AgentCode: '',
+            AgentName: '',
+            Team: TeamNo,
+            AgentStatus: '',
+            AgentStatusCode: '5', //-- Hard Code
+            IsLogin: '',
         }
 
         let ConcurrentCall = [];
@@ -228,7 +228,7 @@
                                 currentAgent.AgentName = response.data.AgentName;
                                 currentAgent.IsLogin = response.data.IsLogin;
                                 currentAgent.AgentStatus = response.data.AgentStatus;
-                                
+
                                 wsChecks = "true";
                                 console.log("new: " + wsChecks);
                                 //$("#errMessage").hide();
@@ -490,39 +490,31 @@
         }
 
         function GetSelectedTextValue(currentStatus) {
-        let selectedText = currentStatus.options[currentStatus.selectedIndex].innerHTML;
-        let selectedValue = currentStatus.value;
+            let selectedText = currentStatus.options[currentStatus.selectedIndex].innerHTML;
+            let selectedValue = currentStatus.value;
             alert("Selected Text: " + selectedText + " Value: " + selectedValue);
-        // Create a data object to send to the API
-        const data = {
-        AgentCode: $("#agent").val(),
-        AgentName: currentAgent.AgentName,
-        Quere: currentAgent.Team,
-        AgentStatus: selectedValue,
-        AgentStatusCode: currentAgent.AgentStatusCode,
-        IsLogin: currentAgent.IsLogin
-        };
 
-        // Send a POST request to the API to update the agent's status
-        $.ajax({
-            type: 'POST',
-            url: ParseServerAPI + "/functions/postOnlineAgentListByTeam",
-            headers: {
-            "X-Parse-Application-Id": ParseAppId,
-            "X-Parse-Master-Key": ParseMasterKey
-            },
-            data: JSON.stringify(data),
-            contentType: "application/json",
-            success: function(response) {
-            console.log("Agent status updated successfully!");
-                // Update the UI to reflect the new status
-                statusDisplay(selectedValue);
+            const data = {
+                AgentCode: $("#agent").val(),
+                AgentName: currentAgent.AgentName,
+                Queue: currentAgent.Team,
+                AgentStatus: selectedValue,
+                AgentStatusCode: currentAgent.AgentStatusCode,
+                IsLogin: currentAgent.IsLogin
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: ParseServerAPI + "/functions/postOnlineAgentListByTeam",
+                headers: {
+                    "X-Parse-Application-Id": ParseAppId,
+                    "X-Parse-Master-Key": ParseMasterKey
                 },
-                error: function(xhr, status, error) {
-                 console.log("Error updating agent status:", error);
-                }
-             });
-            }
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+            })
+
+        }
 
 
         //-------- Web Socket ----------
@@ -865,8 +857,8 @@
                                 <option value="1">Available</option>
                                 <option value="2">Active</option>
                                 <option value="3">Wrap</option>
-                                <option value="4">Not Ready</option>                             
-                            </select>
+                                <option value="4">Not Ready</option>
+                              </select>
                             <script>
                             $(document).ready(function() {
                                 $("#dropdownMenu").change(function() {
